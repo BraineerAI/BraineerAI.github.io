@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Braineer Academy Student Stories</title>
+  <meta name="description" content="Explore interactive Twine stories created by students from Braineer Academy." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Changed font to 'Inter' for better fit in boxes -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #f5f8ff;
+      --bg-soft: #edf3ff;
+      --surface: rgba(255, 255, 255, 0.7);
+      --surface-strong: rgba(255, 255, 255, 0.88);
+      --text: #0f172a;
+      --muted: #475569;
+      --line: rgba(15, 23, 42, 0.12);
+      --brand: #2357ff;
+      --brand-2: #00b6ff;
+      --accent: #7c3aed;
+      --shadow: 0 20px 60px rgba(35, 87, 255, 0.12);
+      --radius: 24px;
+      --max: 1200px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(0, 182, 255, 0.16), transparent 28%),
+        radial-gradient(circle at 85% 15%, rgba(124, 58, 237, 0.14), transparent 24%),
+        radial-gradient(circle at 50% 80%, rgba(35, 87, 255, 0.12), transparent 26%),
+        linear-gradient(180deg, #f9fbff 0%, #eef4ff 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(15, 23, 42, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(15, 23, 42, 0.03) 1px, transparent 1px);
+      background-size: 26px 26px;
+      mask-image: radial-gradient(circle at center, black 55%, transparent 100%);
+      z-index: -1;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(calc(100% - 2rem), var(--max));
+      margin-inline: auto;
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(16px);
+      background: rgba(245, 248, 255, 0.68);
+      border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    }
+
+    .nav {
+      min-height: 76px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.9rem;
+      min-width: 0;
+    }
+
+    .brand-logo {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      padding: 0.5rem;
+      background: linear-gradient(135deg, rgba(35, 87, 255, 0.16), rgba(0, 182, 255, 0.18));
+      border: 1px solid rgba(35, 87, 255, 0.18);
+      box-shadow: var(--shadow);
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+
+    .brand-copy {
+      min-width: 0;
+    }
+
+    .brand-kicker {
+      display: block;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--brand);
+      font-weight: 700;
+      margin-bottom: 0.18rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .brand-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.05rem;
+      line-height: 1;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+    }
+
+    .nav-links a {
+      font-weight: 600;
+      color: var(--muted);
+      transition: color 0.25s ease, transform 0.25s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+      transform: translateY(-1px);
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.65rem;
+      border: 0;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 700;
+      padding: 0.95rem 1.25rem;
+      border-radius: 999px;
+      transition: transform 0.2s ease, box-shadow 0.25s ease, background 0.25s ease, color 0.25s ease;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .button:active {
+      transform: translateY(1px) scale(0.99);
+    }
+
+    .button-primary {
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      color: white;
+      box-shadow: 0 16px 36px rgba(35, 87, 255, 0.25);
+    }
+
+    .button-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 22px 44px rgba(35, 87, 255, 0.32);
+    }
+
+    .button-secondary {
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--text);
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      backdrop-filter: blur(12px);
+    }
+
+    .button-secondary:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 16px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    .hero {
+      padding: 5rem 0 3rem;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 2rem;
+      align-items: stretch;
+    }
+
+    .hero-copy,
+    .hero-panel {
+      position: relative;
+      border-radius: calc(var(--radius) + 8px);
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      background: var(--surface);
+      backdrop-filter: blur(16px);
+      box-shadow: var(--shadow);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .hero-copy {
+      padding: clamp(2rem, 5vw, 4rem);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 560px;
+      isolation: isolate;
+    }
+
+    .hero-copy::before {
+      content: "";
+      position: absolute;
+      inset: auto -10% -20% auto;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.18), transparent 70%);
+      z-index: -1;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: fit-content;
+      padding: 0.5rem 0.85rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--brand);
+      font-weight: 700;
+      margin-bottom: 1.2rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    h1, h2, h3 {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      letter-spacing: -0.02em;
+      font-weight: 700;
+    }
+
+    h1 {
+      font-size: clamp(2.8rem, 6vw, 5.5rem);
+      line-height: 1.1;
+      max-width: 10ch;
+    }
+
+    .hero-subtitle {
+      max-width: 58ch;
+      margin: 1.3rem 0 1.8rem;
+      font-size: clamp(1rem, 1.5vw, 1.1rem);
+      line-height: 1.6;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    .hero-meta {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      margin-top: auto;
+      padding-top: 1rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .meta-block {
+      padding-top: 1rem;
+      border-top: 1px solid var(--line);
+    }
+
+    .meta-number {
+      display: block;
+      font-size: clamp(1.3rem, 2.5vw, 2rem);
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.35rem;
+    }
+
+    .meta-label {
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.4;
+      font-weight: 500;
+    }
+
+    .hero-panel {
+      min-height: 560px;
+      padding: 1.3rem;
+      background:
+        linear-gradient(160deg, rgba(255,255,255,0.82), rgba(237,243,255,0.9));
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 1rem;
+    }
+
+    .panel-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+    }
+
+    .dot-cluster {
+      display: inline-flex;
+      gap: 0.35rem;
+    }
+
+    .dot-cluster span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      opacity: 0.7;
+    }
+
+    .panel-stage {
+      position: relative;
+      border-radius: 26px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(0, 182, 255, 0.18), transparent 28%),
+        radial-gradient(circle at 80% 18%, rgba(124, 58, 237, 0.2), transparent 25%),
+        linear-gradient(180deg, #f7faff 0%, #e8f0ff 100%);
+      border: 1px solid rgba(35, 87, 255, 0.12);
+      min-height: 320px;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+    }
+
+    .panel-stage::before,
+    .panel-stage::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(8px);
+    }
+
+    .panel-stage::before {
+      width: 180px;
+      height: 180px;
+      top: 12%;
+      left: 12%;
+      background: rgba(35, 87, 255, 0.12);
+    }
+
+    .panel-stage::after {
+      width: 240px;
+      height: 240px;
+      bottom: 8%;
+      right: 8%;
+      background: rgba(124, 58, 237, 0.12);
+    }
+
+    .academy-mark {
+      position: relative;
+      width: min(82%, 350px);
+      aspect-ratio: 1 / 1;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.55);
+      border: 1px solid rgba(255,255,255,0.75);
+      backdrop-filter: blur(10px);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 22px 55px rgba(35, 87, 255, 0.14);
+      z-index: 1;
+      padding: 1.75rem;
+    }
+
+    .academy-mark img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .panel-bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .mini-stat {
+      padding: 1rem 1.1rem;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.72);
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      font-weight: 600;
+    }
+
+    .mini-stat strong {
+      display: block;
+      font-size: 1.2rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .mini-stat span {
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .section {
+      padding: 2.5rem 0 5rem;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: 0.95fr 1.05fr;
+      gap: 2rem;
+      align-items: end;
+      margin-bottom: 2rem;
+    }
+
+    .section-head h2 {
+      font-size: clamp(2rem, 4vw, 4rem);
+      line-height: 1.05;
+      max-width: 11ch;
+      font-weight: 700;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.03rem;
+      line-height: 1.8;
+      max-width: 58ch;
+      justify-self: end;
+      font-weight: 500;
+    }
+
+    .stories-wrap {
+      display: grid;
+      gap: 1.25rem;
+    }
+
+    .story {
+      position: relative;
+      display: grid;
+      grid-template-columns: 110px 1.3fr 0.9fr auto;
+      gap: 1.25rem;
+      align-items: center;
+      padding: 1.35rem;
+      border-radius: 28px;
+      background: var(--surface-strong);
+      border: 1px solid rgba(255,255,255,0.7);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 18px 50px rgba(15, 23, 42, 0.06);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+    }
+
+    .story:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 60px rgba(35, 87, 255, 0.12);
+      border-color: rgba(35, 87, 255, 0.18);
+    }
+
+    .story-index {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 22px;
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      font-size: 2rem;
+      color: white;
+      background:
+        linear-gradient(135deg, var(--brand), var(--brand-2));
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 14px 30px rgba(35, 87, 255, 0.22);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .story-main h3 {
+      font-size: clamp(1.35rem, 2vw, 2rem);
+      margin-bottom: 0.45rem;
+      font-weight: 700;
+    }
+
+    .story-url {
+      display: inline-block;
+      color: var(--brand);
+      font-size: 0.9rem;
+      font-weight: 600;
+      word-break: break-word;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .story-desc {
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 0.98rem;
+      margin: 0;
+      max-width: 40ch;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+    }
+
+    .story-actions {
+      justify-self: end;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .story-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.95rem 1.15rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--text), #1e293b);
+      color: white;
+      font-weight: 700;
+      transition: transform 0.2s ease, box-shadow 0.25s ease, background 0.25s ease;
+      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.18);
+      font-family: 'Inter', sans-serif;
+    }
+
+    .story-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 35px rgba(15, 23, 42, 0.24);
+      background: linear-gradient(135deg, var(--brand), var(--accent));
+    }
+
+    .story-link svg {
+      transition: transform 0.25s ease;
+    }
+
+    .story-link:hover svg {
+      transform: translateX(3px);
+    }
+
+    .edit-note {
+      margin-top: 2rem;
+      padding: 1.25rem 1.3rem;
+      border-radius: 22px;
+      background: rgba(255,255,255,0.66);
+      border: 1px dashed rgba(35, 87, 255, 0.22);
+      color: var(--muted);
+      line-height: 1.75;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+    }
+
+    .edit-note strong {
+      color: var(--text);
+    }
+
+    .site-footer {
+      padding: 2rem 0 3rem;
+      border-top: 1px solid rgba(15, 23, 42, 0.08);
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .footer-copy strong {
+      color: var(--text);
+    }
+
+    .stagger-1 { animation: rise 0.9s ease both; animation-delay: 0.05s; }
+    .stagger-2 { animation: rise 0.9s ease both; animation-delay: 0.15s; }
+    .stagger-3 { animation: rise 0.9s ease both; animation-delay: 0.25s; }
+    .stagger-4 { animation: rise 0.9s ease both; animation-delay: 0.35s; }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .hero-grid,
+      .section-head,
+      .story {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-copy,
+      .hero-panel {
+        min-height: unset;
+      }
+
+      .section-head p {
+        justify-self: start;
+      }
+
+      .story-actions {
+        justify-self: start;
+      }
+
+      .story-index {
+        width: 88px;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .nav {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 0.9rem 0;
+      }
+
+      .nav-links {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .hero {
+        padding-top: 2rem;
+      }
+
+      .hero-meta,
+      .panel-bottom,
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-copy {
+        padding: 1.5rem;
+      }
+
+      .hero-panel {
+        padding: 1rem;
+      }
+
+      .story {
+        padding: 1.1rem;
+      }
+
+      .story-index {
+        width: 76px;
+        font-size: 1.5rem;
+      }
+
+      .button,
+      .story-link {
+        width: 100%;
+      }
+
+      .story-actions {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <a class="brand" href="#top" aria-label="Braineer Academy home">
+        <img
+          class="brand-logo"
+          src="https://www.braineeracademy.com/wp-content/uploads/2024/01/cropped-Braineer-logo-1.png"
+          alt="Braineer Academy logo"
+          onerror="this.style.display='none'"
+        />
+        <div class="brand-copy">
+          <span class="brand-kicker">Student Creations</span>
+          <span class="brand-title">Braineer Academy Twine Stories</span>
+        </div>
+      </a>
+
+      <nav class="nav-links" aria-label="Primary navigation">
+        <a href="#stories">Stories</a>
+        <a href="https://www.braineeracademy.com" target="_blank" rel="noopener noreferrer">Academy Site</a>
+        <a class="button button-primary" href="#stories">Play a Story</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-grid">
+        <article class="hero-copy">
+          <div class="eyebrow stagger-1">Interactive fiction by students</div>
+          <h2 class="stagger-2">Stories built with imagination, choices, and code. Using AI as a thought partner</h2>
+          <p class="hero-subtitle stagger-3">
+            Discover a growing collection of experiences created by students at
+            <strong>Braineer Academy</strong>. From mystery and survival to action-packed gameplay,
+            each story invites players to explore, decide, and play through a unique world.
+          </p>
+
+          <div class="hero-actions stagger-4">
+            <a class="button button-primary" href="#stories">Explore Stories</a>
+            <a class="button button-secondary" href="https://www.braineeracademy.com" target="_blank" rel="noopener noreferrer">
+              Visit Braineer Academy
+            </a>
+          </div>
+
+          <div class="hero-meta">
+            <div class="meta-block">
+              <span class="meta-number" id="storyCount">3</span>
+              <span class="meta-label">Student-made stories currently featured</span>
+            </div>
+            <div class="meta-block">
+              <span class="meta-number">Choice</span>
+              <span class="meta-label">Interactive storytelling designed for exploration and built using AI as a thought partner</span>
+            </div>
+        </article>
+
+        <aside class="hero-panel reveal" aria-label="Braineer Academy feature panel">
+          <div class="panel-top">
+            <span>Powered by creativity + digital storytelling</span>
+            <div class="dot-cluster" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+          </div>
+
+          <div class="panel-stage">
+            <div class="academy-mark">
+              <img
+                src="https://www.braineeracademy.com/wp-content/uploads/2024/01/Braineer-logo-1.png"
+                alt="Braineer Academy"
+                onerror="this.parentElement.innerHTML='<div style=&quot;text-align:center;&quot;><strong style=&quot;font-family:Inter,sans-serif;font-size:2rem;display:block;margin-bottom:.5rem;&quot;>Braineer Academy</strong><span style=&quot;color:#475569;line-height:1.6;&quot;>Interactive student storytelling showcase</span></div>';"
+              />
+            </div>
+          </div>
+
+          <div class="panel-bottom">
+            <div class="mini-stat">
+              <strong>Showcase</strong>
+              <span>Promoting stories built through creativity, writing, and design.</span>
+            </div>
+            <div class="mini-stat">
+              <strong>Student Work</strong>
+              <span>Built by students using AI as a thought partner. Teaching students to use AI in an appropriate manner to extend learning</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section" id="stories">
+      <div class="container">
+        <div class="section-head reveal">
+          <h2>Featured student stories.</h2>
+        </div>
+
+        <div class="stories-wrap" id="storiesList">
+			
+		<article class="story reveal">
+            <div class="story-index" aria-hidden="true">01</div>
+            <div class="story-main">
+              <h3>Hag</h3>
+              <a class="story-url" href="https://braineerai.github.io/hag.html" target="_blank" rel="noopener noreferrer">
+                https://braineerai.github.io/hag.html
+              </a>
+            </div>
+            <p class="story-desc">
+              Test your luck against the hag.
+            </p>
+            <div class="story-actions">
+              <a class="story-link" href="https://braineerai.github.io/hag.html" target="_blank" rel="noopener noreferrer" aria-label="Open Hag story">
+                Play Story
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </div>
+          </article>
+
+          <article class="story reveal">
+            <div class="story-index" aria-hidden="true">02</div>
+            <div class="story-main">
+              <h3>Roblox Rivals</h3>
+              <a class="story-url" href="https://braineerai.github.io/RobloxRivals.html" target="_blank" rel="noopener noreferrer">
+                https://braineerai.github.io/RobloxRivals.html
+              </a>
+            </div>
+            <p class="story-desc">
+              A sniper game get your kills before you die.
+            </p>
+            <div class="story-actions">
+              <a class="story-link" href="https://braineerai.github.io/RobloxRivals.html" target="_blank" rel="noopener noreferrer" aria-label="Open Roblox Rivals story">
+                Play Story
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </div>
+          </article>
+
+          <article class="story reveal">
+            <div class="story-index" aria-hidden="true">03</div>
+            <div class="story-main">
+              <h3>Loanne</h3>
+              <a class="story-url" href="https://braineerai.github.io/Loanne.html" target="_blank" rel="noopener noreferrer">
+                https://braineerai.github.io/Loanne.html
+              </a>
+            </div>
+            <p class="story-desc">
+              A text based mystery story with surprises.
+            </p>
+            <div class="story-actions">
+              <a class="story-link" href="https://braineerai.github.io/Loanne.html" target="_blank" rel="noopener noreferrer" aria-label="Open Loanne story">
+                Play Story
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M7 17L17 7M17 7H9M17 7V15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </div>
+          </article>
+
+        <div class="edit-note reveal">
+         </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-copy">
+        <strong>Braineer Academy Stories</strong><br />
+        Showcasing interactive fiction and student creativity through playable digital stories.
+      </div>
+      <a class="button button-secondary" href="#top">Back to Top</a>
+    </div>
+  </footer>
+
+  <script>
+    // Auto-update story count
+    const stories = document.querySelectorAll('.story');
+    const storyCount = document.getElementById('storyCount');
+    if (storyCount) {
+      storyCount.textContent = stories.length;
+    }
+
+    // Reveal on scroll
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+  </script>
+</body>
+</html>
